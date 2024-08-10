@@ -134,3 +134,105 @@ Post-process time: 0.0296 seconds
 Total run time: 0.0601 seconds
 Performance: 16.64670582632164 FPS
 ```
+
+
+Here's the text translated and formatted for a GitHub README:
+
+---
+
+## KV260 ROS2 and GPIO Testing with a Webcam
+
+In this project, I tested ROS2 and GPIO functionality on the KV260, integrating it with a webcam. The object detection data processed by the DPU-PYNQ on the KV260 was utilized for various applications.
+
+
+### Webcam (Logitech C270n)
+
+The webcam used is the Logitech C270n. Despite its low cost, it supports 640x480 resolution at 30fps, making it sufficient for testing purposes.
+
+
+### Installing GStreamer, libuvc, and v4l2loopback-dkms
+
+To enable live streaming from the USB camera, the following libraries need to be installed:
+
+```bash
+git clone https://github.com/nickel110/libuvc.git
+cd libuvc/
+mkdir build
+cd build/
+cmake ..
+make && sudo make install
+
+sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+sudo apt install v4l2loopback-dkms
+```
+
+Since GStreamer is not included in the default OpenCV-Python package on PYNQ, you'll need to uninstall it and link it to Ubuntu's OpenCV:
+
+```bash
+sudo su
+source /etc/profile.d/pynq_venv.sh
+pip uninstall opencv-python
+```
+
+### Installing ROS2 and rviz2
+
+There are various ways to install ROS2 on the KV260. For convenience, I used the reference script from a previous AMD (Xilinx) FPGA contest.
+
+[Installing ROS2-Humble](https://github.com/amd/Kria-RoboticsAI/blob/main/files/scripts/install_ros.sh)
+
+```bash
+sudo su
+source /etc/profile.d/pynq_venv.sh
+source ./install_ros.sh
+```
+
+Install visualization tools and ROS2 OpenCV packages:
+
+```bash
+sudo apt install ros-humble-rviz2
+sudo apt install ros-humble-image-transport
+sudo apt install ros-humble-cv-bridge
+```
+
+### Testing YOLOX with GPIO Output Using a Webcam
+
+I tested live streaming with a webcam while performing object detection using YOLOX. When an orange ball is detected, a GPIO output is triggered to blink an LED. The program used for this test is available [here](https://github.com/iotengineer22/kv260-ubuntu-test/blob/main/usb-camera/app_gst-yolox-real-normal-camera-gpio.py).
+
+For GPIO output, I used a custom debug board that I made, which is documented [here](https://github.com/iotengineer22/PCB-KV260-PMOD-TEST).
+
+Here’s how I tested it:
+
+```bash
+sudo su
+source /etc/profile.d/pynq_venv.sh
+cd kv260-ubuntu-test/usb-camera/
+python3 app_gst-yolox-real-normal-camera-gpio.py
+```
+
+### Testing YOLOX with ROS2 Output Using a Webcam
+
+I also tested live streaming with ROS2 output, where the detected objects and coordinates are displayed as markers. The program for this test is available [here](https://github.com/iotengineer22/kv260-ubuntu-test/blob/main/usb-camera/gst-yolox-ros2-normal-camera.py).
+
+First, start rviz2:
+
+```bash
+sudo su
+source /opt/ros/humble/setup.bash
+rviz2
+```
+
+Display the "MarkerArray" and "Image" from the left window in rviz2:
+
+- **Image:** `/camera/image/q1`
+- **Fixed Frame:** `base_link`
+
+In another terminal, run the following:
+
+```bash
+sudo su
+source /etc/profile.d/pynq_venv.sh
+source /opt/ros/humble/setup.bash
+cd kv260-ubuntu-test/usb-camera/
+python3 gst-yolox-ros2-normal-camera.py
+```
+
