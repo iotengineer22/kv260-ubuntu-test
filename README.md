@@ -236,3 +236,60 @@ cd kv260-ubuntu-test/usb-camera/
 python3 gst-yolox-ros2-normal-camera.py
 ```
 
+
+
+## Connecting and Testing the RICOH THETA V 360° Camera with KV260
+
+In this project, we are testing the connection of the RICOH THETA V 360° camera to the KV260 platform. We will also be checking the GStreamer debug logs while comparing performance between 2K and 4K images.
+
+### Setup
+
+To enable GStreamer support for the THETA camera, we installed the necessary libraries using the following steps:
+
+```bash
+git clone https://github.com/nickel110/gstthetauvc.git
+cd gstthetauvc/thetauvc/
+make
+sudo find / -type d -name 'gstreamer-1.0'
+ls /usr/lib/aarch64-linux-gnu/gstreamer-1.0
+sudo cp gstthetauvc.so /usr/lib/aarch64-linux-gnu/gstreamer-1.0
+ls /usr/lib/aarch64-linux-gnu/gstreamer-1.0
+sudo /sbin/ldconfig -v
+gst-inspect-1.0 thetauvcsrc
+```
+
+### Test Results
+
+We conducted object detection tests with the 360° YOLOX model, as shown in the example below. 
+
+While USB 2.0 theoretically supports up to 480Mbps, actual performance may be lower. During the contest, we did not use 4K (3840p) resolution, and found that 2K (1920p) was sufficiently satisfying.
+
+```bash
+sudo su
+cd kv260-ubuntu-test/yolox-test/
+source /etc/profile.d/pynq_venv.sh
+export GST_DEBUG=4
+python3 app_gst-yolox-real-360-2divide.py
+```
+
+- **2K Image**: The bitrate was approximately 40Mbps. Object detection in 360° was running at around 6fps.
+
+```text
+bitrate=(uint)43181526;
+
+0:00:07.751492592  5122 0xaaaaf53132a0 INFO              GST_STATES gstbin.c:2069:gst_bin_get_state_func:<pipeline0> getting state
+0:00:07.752487562  5122 0xaaaaf5fed360 INFO               baseparse gstbaseparse.c:4088:gst_base_parse_set_latency:<h264parse0> min/max latency 0:00:00.033366666, 0:00:00.033366666
+0:00:07.752937767  5122 0xaaaaf5fed360 INFO            videodecoder gstvideodecoder.c:1633:gst_video_decoder_sink_event_default:<avdec_h264-0> upstream tags: taglist, video-codec=(string)"H.264\ \(Baseline\ Profile\)", minimum-bitrate=(uint)42394646, maximum-bitrate=(uint)43093787, bitrate=(uint)43181526;
+```
+
+- **4K Image**: The bitrate was approximately 120Mbps. Object detection in 360° was running at around 3fps.
+
+```text
+bitrate=(uint)125117561;
+
+0:00:39.427957699  5325 0xaaaae1e9b2a0 INFO              GST_STATES gstbin.c:2069:gst_bin_get_state_func:<pipeline0> getting state
+0:00:39.430027031  5325 0xaaaae3896f60 INFO               baseparse gstbaseparse.c:4088:gst_base_parse_set_latency:<h264parse0> min/max latency 0:00:00.033366666, 0:00:00.033366666
+0:00:39.430708689  5325 0xaaaae3896f60 INFO            videodecoder gstvideodecoder.c:1633:gst_video_decoder_sink_event_default:<avdec_h264-0> upstream tags: taglist, video-codec=(string)"H.264\ \(Baseline\ Profile\)", minimum-bitrate=(uint)123949572, maximum-bitrate=(uint)125917524, bitrate=(uint)125117561;
+```
+
+
