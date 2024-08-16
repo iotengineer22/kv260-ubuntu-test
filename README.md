@@ -293,3 +293,46 @@ bitrate=(uint)125117561;
 ```
 
 
+Here’s the content translated into English and formatted for a GitHub README:
+
+---
+
+## Stepper Motor Operation Test
+
+This repository provides examples of how to operate a stepper motor using the KV260.
+
+We used the KV260 evaluation board for these tests, and the programming was done in Python.
+
+The program and model files should be placed in the `jupyter_notebooks` folder as shown below:
+
+```bash
+sudo su
+cd $PYNQ_JUPYTER_NOTEBOOKS
+cd jupyter_notebooks
+cp -rf /home/ubuntu/kv260-ubuntu-test/jupyter_notebooks/pynq-stepper/ ./
+```
+
+### Stepper Motor Control with Custom Driver Circuit
+
+Next, we used a custom driver circuit to control the stepper motor. The driver IC used is the DRV8833, implemented on a custom PCB. The motor is powered by the USB 5V from the evaluation board.
+
+We confirmed that the motor rotates correctly and the waveform is stable. We also tested the operation with a step frequency increased to 125Hz, and it worked without any issues.
+
+### Stepper Motor and Object Detection Test
+
+This is an advanced test where a webcam and stepper motor are connected to the KV260. The motor is controlled to rotate when an orange ball is detected by the webcam.
+
+To start the Python program:
+
+```bash
+cd kv260-ubuntu-test/stepper-motor/
+source /etc/profile.d/pynq_venv.sh
+python3 app_gst-yolox-real-normal-camera-stepper.py
+```
+
+The actual test program is saved here:
+
+[https://github.com/iotengineer22/kv260-ubuntu-test/blob/main/stepper-motor/app_gst-yolox-real-normal-camera-stepper.py](https://github.com/iotengineer22/kv260-ubuntu-test/blob/main/stepper-motor/app_gst-yolox-real-normal-camera-stepper.py)
+
+When the orange ball is not detected by the webcam, the stepper motor does not rotate. The motor only rotates when the ball is detected.
+
