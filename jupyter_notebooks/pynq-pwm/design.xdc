@@ -1,0 +1,11 @@
+set_property PACKAGE_PIN H12 [get_ports pwm0]
+set_property PACKAGE_PIN E10 [get_ports pwm1]
+set_property PACKAGE_PIN D10 [get_ports pwm2]
+set_property PACKAGE_PIN C11 [get_ports pwm3]
+set_property PACKAGE_PIN B10 [get_ports gpio_rtl_1_tri_o[0]]
+
+set_property IOSTANDARD LVCMOS33 [get_ports pwm0]
+set_property IOSTANDARD LVCMOS33 [get_ports pwm1]
+set_property IOSTANDARD LVCMOS33 [get_ports pwm2]
+set_property IOSTANDARD LVCMOS33 [get_ports pwm3]
+set_property IOSTANDARD LVCMOS33 [get_ports gpio_rtl_1_tri_o[0]]
