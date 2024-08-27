@@ -336,3 +336,18 @@ The actual test program is saved here:
 
 When the orange ball is not detected by the webcam, the stepper motor does not rotate. The motor only rotates when the ball is detected.
 
+
+## KV260 PWM Test with PYNQ
+
+I tried modifying the AXI bus registers using PYNQ's MMIO.
+
+```bash
+sudo su
+cd $PYNQ_JUPYTER_NOTEBOOKS
+cd jupyter_notebooks
+cp -rf /home/ubuntu/kv260-ubuntu-test/jupyter_notebooks/pynq-pwm/ ./
+```
+
+
+
+
